@@ -1,0 +1,61 @@
+{
+    "if": {
+      "allOf": [
+        {
+          "field": "type",
+          "equals": "Microsoft.Network/networkSecurityGroups/securityRules"
+        },
+        {
+          "allOf": [
+            {
+              "field": "Microsoft.Network/networkSecurityGroups/securityRules/access",
+              "equals": "Allow"
+            },
+            {
+              "field": "Microsoft.Network/networkSecurityGroups/securityRules/direction",
+              "equals": "Inbound"
+            },
+            {
+                "anyOf": [
+                  {
+                    "field": "Microsoft.Network/networkSecurityGroups/securityRules/destinationPortRange",
+                    "in": ["21", "22", "23", "139", "1443", "3389", "*"]
+                  },
+                  {
+                    "not": {
+                      "field": "Microsoft.Network/networkSecurityGroups/securityRules/destinationPortRanges[*]",
+                      "notIn": ["21", "22", "23", "139", "1443", "3389", "*"]
+                    }
+                  }
+                ]
+              },
+            {
+              "anyOf": [
+                {
+                  "field": "Microsoft.Network/networkSecurityGroups/securityRules/sourceAddressPrefix",
+                  "in": [
+                    "*",
+                    "0.0.0.0/0",
+                    "Internet"
+                  ]
+                },
+                {
+                  "not": {
+                    "field": "Microsoft.Network/networkSecurityGroups/securityRules/sourceAddressPrefixes[*]",
+                    "notIn": [
+                      "*",
+                      "0.0.0.0/0",
+                      "Internet"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "then": {
+      "effect": "[parameters('effect')]"
+    }
+}
